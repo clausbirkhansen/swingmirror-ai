@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1c17">
+<title>SwingMirror</title>
+<link rel="stylesheet" href="app.css">
+<style>
+/* v0.9: Fill/Fit is applied when drawing, so the select needs a hint about where it matters */
+.hint{font-size:12px;color:#b5cdbd;margin:6px 0 0}
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">GOLF TRAINING · VERSION 0.9</div>
+<h1><span style="color:#ffffff">Swing</span><span style="color:#86e5ae">Mirror</span></h1>
+<p>Watch your golf swing with adjustable video delay. Use one device as Camera and another as Viewer.</p>
+<nav class="tabs">
+  <button data-tab="camera" class="active">📷 Camera</button>
+  <button data-tab="viewer">▣ Viewer</button>
+</nav>
+
+<section id="camera" class="panel">
+  <h2>Camera device</h2>
+  <p>Start the camera, then enter the pairing code on your Viewer device. Keep the app open and the screen awake.</p>
+  <div class="row"><button id="startCamera">Start camera &amp; pairing</button><button id="stopCamera" class="secondary" disabled>Stop</button></div>
+  <div class="stage"><video id="localVideo" autoplay muted playsinline></video><canvas id="cameraOverlay" class="overlay" width="640" height="480"></canvas></div>
+  <label>Your pairing code</label>
+  <div class="code" id="roomCode">—</div>
+  <p><small>The code becomes active when the connection service is ready.</small></p>
+  <div class="statusline"><span class="chip" id="cameraState">Not started</span><button id="copyCode" class="secondary" style="flex:0">Copy code</button></div>
+</section>
+
+<section id="viewer" class="panel hidden">
+  <h2>Viewer device</h2>
+  <p>Enter the code shown on the camera device. Video appears with your selected delay.</p>
+  <label for="connectCode">Pairing code</label>
+  <input id="connectCode" maxlength="6" placeholder="e.g. A7K2P9" autocomplete="off" autocapitalize="characters" spellcheck="false">
+  <div class="row"><button id="connect">Connect to camera</button><button id="disconnect" class="secondary">Disconnect</button></div>
+  <div class="stage" id="viewerStage">
+    <button id="golfExit" class="golf-exit hidden" type="button">✕ Exit Golf Mode</button>
+    <video id="remoteVideo" autoplay muted playsinline></video>
+    <canvas id="viewerCanvas" width="640" height="480"></canvas>
+    <canvas id="viewerOverlay" class="overlay" width="640" height="480"></canvas>
+  </div>
+  <span class="chip" id="viewerState">Waiting for connection</span>
+</section>
+
+<section id="trainingTools" class="panel hidden">
+  <div class="statusline"><h2>Training tools</h2><span class="chip">Viewer controls</span></div>
+  <label class="setting" for="delay"><span>Video delay</span><span id="delayLabel">5 sec</span></label>
+  <input id="delay" type="range" min="1" max="15" value="5">
+  <div class="row"><div>
+    <label for="quality">Image quality</label>
+    <select id="quality">
+      <option value="medium">Balanced</option>
+      <option value="low">Lower data use</option>
+      <option value="high">Higher quality</option>
+    </select>
+  </div></div>
+  <label for="fitMode">Video framing</label>
+  <select id="fitMode">
+    <option value="fit">Fit – show full picture</option>
+    <option value="fill">Fill – crop to fill screen</option>
+  </select>
+  <p class="hint">Fill crops the picture to the screen shape, so it is most visible in Golf Mode.</p>
+  <div class="row" style="margin-top:12px">
+    <button id="freeze" class="secondary">⏸ Freeze frame</button>
+    <button id="saveClip" class="secondary">⏺ Save recording</button>
+    <button id="clear" class="secondary">↻ Reset buffer</button>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button id="fullscreen" class="secondary">⛶ Golf Mode</button>
+    <button id="restore" class="secondary hidden">Exit Golf Mode</button>
+  </div>
+  <p class="hint">Nothing is stored while you practise. Tap <b>Save recording</b> after a swing to keep a video of the latest seconds (the delay plus 10 s) in your photos.</p>
+  <label class="check"><input type="checkbox" id="mirror"> Mirror image</label>
+  <label class="check"><input type="checkbox" id="guides" checked> Show alignment guides</label>
+  <label class="check"><input type="checkbox" id="grid"> Show rule-of-thirds grid</label>
+  <p><small>Guides and grid are visual aids. Automatic swing detection and slow motion are being developed separately.</small></p>
+</section>
+
+<section class="panel">
+  <h2>Connection &amp; troubleshooting</h2>
+  <div id="status" class="status">Ready. Start the camera on one device and connect the viewer on the other.</div>
+  <div class="row" style="margin-top:10px"><button id="diagnose" class="secondary">Run diagnostics</button><button id="retry" class="secondary">Try again</button></div>
+  <p class="note"><small>Mobile hotspots and some cellular networks block direct connections. A TURN relay (see config.js) makes pairing reliable in those cases.</small></p>
+  <div id="diagnostic" class="muted" style="white-space:pre-wrap;font-size:12px"></div>
+</section>
+<p class="foot">Version 0.9 · Video is processed on your devices. WebRTC uses a signaling service to pair the devices. No cloud video storage is included.</p>
+</main>
+<script src="config.js"></script>
+<script src="peerjs.min.js"></script>
+<script>/* If the local copy is missing (e.g. not uploaded to a web host), fall back to a pinned CDN copy. */
+window.Peer||document.write('<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"><\/script>');</script>
+<script src="app.js"></script>
+</body>
+</html>
