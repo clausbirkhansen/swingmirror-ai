@@ -1,0 +1,14 @@
+{
+  "appId": "dk.swingmirror.app",
+  "appName": "SwingMirror",
+  "webDir": "www",
+  "backgroundColor": "#0b1c16",
+  "ios": {
+    "contentInset": "never"
+  },
+  "plugins": {
+    "Media": {
+      "androidGalleryMode": false
+    }
+  }
+}
